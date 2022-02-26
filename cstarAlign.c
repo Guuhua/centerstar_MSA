@@ -20,7 +20,6 @@ char **alignToALL(char **strs, int num, int maxcol)
     for (int i = 0; i < num - 1; i++)
     {
         int j = i >= maxcol ? i + 1 : i;
-        printf("i = %d, j = %d\t", i, j);
         char **temp = AlignStr(fmA, strs[maxcol], strs[j]);
         res[i<<1] = temp[0];
         res[(i<<1)+1] = temp[1];
@@ -32,10 +31,10 @@ char **alignToALL(char **strs, int num, int maxcol)
 
 int *markGapsCenSeq(char **strs, char *centerSeq, int num)
 {
-    int *marks = (int *)malloc(sizeof(int) * (strlen(centerSeq) + 1));
+    int *marks = (int *)calloc(strlen(centerSeq) + 1, sizeof(int));
+    
     for (int i = 0; i < num; i++)
     {
-        printf("i = %d\t", i);
         int k = 0, counter = 0;
         char *ps = strs[i<<1];
         // printf("%d:%d\t", strlen(ps), strlen(centerSeq));
@@ -53,12 +52,7 @@ int *markGapsCenSeq(char **strs, char *centerSeq, int num)
                 k++;
             }
         }
-        printf("K:%d,",k);
         marks[k] = MAX(marks[k], counter);
-    }
-    for (int i = 0; i < (strlen(centerSeq) + 1); i++)
-    {
-        printf("%d,. ", marks[i]);
     }
     return marks;
 }
@@ -67,10 +61,10 @@ char **insertGapsToStrs(char **res, char *centerSeq, int *marks, int maxcol, int
 {
     char **strsed = (char **)malloc(sizeof(char *) * num);
     strsed[maxcol] = InsertGaps(marks, centerSeq, strlen(centerSeq) + 1);
+    // printf("i = %d, %ld\n", maxcol, strlen(strsed[maxcol]));
 
     for (int i = 0; i < num - 1; i++)
     {
-        printf("ii = %d\t", i);
         char *tempA = res[i<<1];
         int *tempmark = (int *)calloc((strlen(tempA) + 1), sizeof(int));
         int pi = 0, pj = 0, total = 0;
@@ -139,19 +133,14 @@ char **starAlign(char **strs, int num)
     int maxcol = findMaxCol(strs, num);
 
     // 2. align to All
-    printf("1. align");
+    // printf("1. align\n");
     char **res = alignToALL(strs, num, maxcol);
 
     // 3. mark the gaps in center seq
-    printf("2. mark");
+    // printf("2. mark\n");
     int *marks = markGapsCenSeq(res, strs[maxcol], num - 1);
 
-    for (int i = 0; i < strlen(strs[maxcol]); i++)
-    {
-        printf("%d,, ", marks[i]);
-    }
-
     // 4. insert the gaps
-    printf("3. insert");
+    // printf("3. insert\n");
     return insertGapsToStrs(res, strs[maxcol], marks, maxcol, num);
 }

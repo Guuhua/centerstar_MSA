@@ -38,11 +38,8 @@ size_t *countInfo(char *path, size_t *num)
     if (line)
         free(line);
     
-    if ((*num) >= (tempL * 100))
-    {
-        lens = realloc(lens, sizeof(size_t) * (++tempL) * 100);
-        if (lens == NULL) exit(EXIT_FAILURE);
-    }
+    lens = realloc(lens, sizeof(size_t) * ((*num) + 1));
+    if (lens == NULL) exit(EXIT_FAILURE);
     lens[(*num)++] = length;
     
     return lens;
@@ -59,7 +56,7 @@ void readFasta(char *path, char ***strs, char ***labels, size_t *num)
 
     // get the number of and length of seq
     size_t *lens = (size_t *)countInfo(path, num);
-    *strs = (char **)malloc(sizeof(char *) * (*num));
+    *strs   = (char **)malloc(sizeof(char *) * (*num));
     *labels = (char **)malloc(sizeof(char *) * (*num));
 
 	fp = fopen(path, "r");
@@ -78,9 +75,9 @@ void readFasta(char *path, char ***strs, char ***labels, size_t *num)
 			if (state == 1)
 				idx++;
 			state = 1;
-            (*strs)[idx] = (char *)malloc(sizeof(char) * lens[idx]);
+            (*strs)[idx] = (char *)malloc(sizeof(char) * (lens[idx] + 1));
             (*strs)[idx][0] = 0;
-            (*labels)[idx] = (char *)malloc(sizeof(char) * (read - 1));
+            (*labels)[idx] = (char *)malloc(sizeof(char) * read);
             strcpy((*labels)[idx], line+1);
 		} 
         else 

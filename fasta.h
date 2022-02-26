@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define _GNU_SOURCE
 #include <string.h>
 
 #define LEN 60
